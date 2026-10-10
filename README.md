@@ -8,6 +8,8 @@ desk: breathes, blinks, chats in IRC style, reacts when you touch it, pulls
 night shifts, and reacts to real-world data (weather, Hacker News, a host
 monitor, Wi-Fi it can see).
 
+<p align="center"><img src="docs/demo.gif" width="240" alt="Sprout idle animation" /></p>
+
 ![Boot splash](docs/splash.svg)
 
 ![Modes: online, hacking, annoyed](docs/modes.svg)
