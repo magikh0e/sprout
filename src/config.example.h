@@ -14,7 +14,7 @@
 //   UK          "GMT0BST,M3.5.0/1,M10.5.0"
 //   Central EU  "CET-1CEST,M3.5.0,M10.5.0/3"
 #define TZ_INFO     "EST5EDT,M3.2.0,M11.1.0"
-#define CLOCK_24H   1         // 1 = 24-hour clock, 0 = 12-hour am/pm
+#define CLOCK_24H   0         // 1 = 24-hour clock, 0 = 12-hour am/pm
 
 // Location for weather (Open-Meteo, no API key). Find yours on any map.
 #define WX_LAT      "21.3069"
