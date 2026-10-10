@@ -1,0 +1,21 @@
+// Copy this to config.h and fill it in. config.h is gitignored so your
+// Wi-Fi password never gets committed.
+#pragma once
+
+// --- Wi-Fi (used only when DEMO_DAYNIGHT is 0) ---
+#define WIFI_SSID   "your-network"
+#define WIFI_PASS   "your-password"
+
+// POSIX TZ string — handles DST automatically. Common ones:
+//   US Eastern  "EST5EDT,M3.2.0,M11.1.0"
+//   US Central  "CST6CDT,M3.2.0,M11.1.0"
+//   US Mountain "MST7MDT,M3.2.0,M11.1.0"
+//   US Pacific  "PST8PDT,M3.2.0,M11.1.0"
+//   UK          "GMT0BST,M3.5.0/1,M10.5.0"
+//   Central EU  "CET-1CEST,M3.5.0,M10.5.0/3"
+#define TZ_INFO     "EST5EDT,M3.2.0,M11.1.0"
+
+// --- Demo day/night ---
+// 1 = fast simulated day (no Wi-Fi needed). 0 = real time via NTP.
+#define DEMO_DAYNIGHT 0
+#define DEMO_DAY_MS   120000UL

@@ -21,13 +21,17 @@ inline bool haveReal = false;
 inline void begin() {
 #if !DEMO_DAYNIGHT
   if (strlen(WIFI_SSID) > 0) {
+    WiFi.mode(WIFI_STA);
     WiFi.begin(WIFI_SSID, WIFI_PASS);
     uint32_t t0 = millis();
-    while (WiFi.status() != WL_CONNECTED && millis() - t0 < 8000) delay(200);
+    while (WiFi.status() != WL_CONNECTED && millis() - t0 < 10000) delay(200);
     if (WiFi.status() == WL_CONNECTED) {
-      configTime(GMT_OFFSET_SEC, DST_OFFSET_SEC, "pool.ntp.org", "time.nist.gov");
+      configTzTime(TZ_INFO, "pool.ntp.org", "time.nist.gov");   // DST-aware
       struct tm tm;
-      haveReal = getLocalTime(&tm, 5000);
+      haveReal = getLocalTime(&tm, 8000);
+      Serial.printf("[time] wifi ok, ntp=%d\n", haveReal);
+    } else {
+      Serial.println("[time] wifi failed, offline clock");
     }
   }
 #endif

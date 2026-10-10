@@ -15,6 +15,7 @@
 #include "LGFX_Sprout.hpp"
 #include "scene.hpp"
 #include "time_src.hpp"
+#include "store.hpp"
 
 #define TOUCH_TEST 0   // 1 = bare init + touch poll only (isolation); 0 = full app
 
@@ -73,6 +74,8 @@ void onPoke() {
   uint32_t now = millis();
   lastInteraction = now;
 
+  store::addPoke();
+
   if (inSession()) {
     // disturbing the hacking session -> annoyed, even a single poke at night
     mood = STARTLED; reactStart = now; reactDur = 850;
@@ -124,9 +127,14 @@ void setup() {
   return;
 #endif
 
+  store::begin();
   scene::initPalette(tft);
   scene::drawBackground(tft);
-  scene::say(tft, "hey, i'm sprout");
+  if (store::boots <= 1) {
+    scene::say(tft, "hey, i'm sprout");
+  } else {
+    scene::say(tft, ("back! boot #" + String(store::boots)).c_str());
+  }
 
   creature.setColorDepth(16);
   if (!creature.createSprite(scene::SPR_W, scene::SPR_H))
@@ -246,13 +254,19 @@ void loop() {
     scene::drawCursor(tft, cursorOn);
   }
 
+  store::flush(now);
+
   // --- random chatter: ~1 line every 5 min, flavoured by mood ---
   if (now >= nextSay && !reacting) {
     if (mood == HACKING) {
       scene::say(tft, hackLines[random(hackCount)]);
     } else if (mood == IDLE) {
-      scene::say(tft, idleLines[sayIdx]);
-      sayIdx = (sayIdx + 1) % idleCount;
+      if (random(3) == 0 && store::pokes > 0)
+        scene::say(tft, ("pokes: " + String(store::pokes)).c_str());
+      else {
+        scene::say(tft, idleLines[sayIdx]);
+        sayIdx = (sayIdx + 1) % idleCount;
+      }
     }
     nextSay = now + random(270000, 330000);
   }
