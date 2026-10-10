@@ -15,6 +15,8 @@ monitor, Wi-Fi it can see).
 *Mockups — the real panel adds the breathing/blink motion, the scrolling
 ticker, and the live clock.*
 
+> 🤖 Built with AI, for fun.
+
 ## Status
 
 MVP complete and running on hardware. The creature breathes, blinks, reacts to
