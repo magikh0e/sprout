@@ -5,6 +5,9 @@
 //   2. SD card  /sprout.json   (read at boot, before Wi-Fi)
 //   3. web URL  (the "config_url" field, fetched after Wi-Fi connects)
 //
+// Wi-Fi creds are only read from the local SD card, never from the URL — a
+// remote config must not carry a password.
+//
 // So the device works with no SD card (compiled defaults), or you drop a
 // /sprout.json on an SD card to change Wi-Fi / location / behaviour without
 // reflashing, or point it at a URL to manage a fleet centrally.
@@ -46,9 +49,13 @@ inline bool validCoord(const String& s) {
   return end && *end == '\0';
 }
 
-inline void merge(JsonDocument& d) {
-  if (d.containsKey("wifi_ssid"))    ssid = d["wifi_ssid"].as<String>();
-  if (d.containsKey("wifi_pass"))    pass = d["wifi_pass"].as<String>();
+// allowSecrets: Wi-Fi creds are only honoured from a local source (SD card),
+// never from a remote URL — a URL config must not carry a password.
+inline void merge(JsonDocument& d, bool allowSecrets) {
+  if (allowSecrets) {
+    if (d.containsKey("wifi_ssid")) ssid = d["wifi_ssid"].as<String>();
+    if (d.containsKey("wifi_pass")) pass = d["wifi_pass"].as<String>();
+  }
   if (d.containsKey("tz"))           tz   = d["tz"].as<String>();
   if (d.containsKey("lat")) { String v = d["lat"].as<String>(); if (validCoord(v)) lat = v; }
   if (d.containsKey("lon")) { String v = d["lon"].as<String>(); if (validCoord(v)) lon = v; }
@@ -66,7 +73,7 @@ inline bool loadFromSD() {
   File f = SD.open("/sprout.json");
   if (f) {
     StaticJsonDocument<1024> doc;
-    if (deserializeJson(doc, f) == DeserializationError::Ok) { merge(doc); ok = true; source = "sd"; }
+    if (deserializeJson(doc, f) == DeserializationError::Ok) { merge(doc, true); ok = true; source = "sd"; }
     f.close();
   }
   SD.end();
@@ -84,7 +91,7 @@ inline bool loadFromUrl(const String& url) {
   bool ok = false;
   if (http.GET() == 200) {
     StaticJsonDocument<1024> doc;
-    if (deserializeJson(doc, http.getString()) == DeserializationError::Ok) { merge(doc); ok = true; source = "url"; }
+    if (deserializeJson(doc, http.getString()) == DeserializationError::Ok) { merge(doc, false); ok = true; source = "url"; }
   }
   http.end();
   Serial.printf("[cfg] remote %s: %s\n", ok ? "merged" : "skipped", url.c_str());
