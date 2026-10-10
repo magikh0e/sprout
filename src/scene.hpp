@@ -16,7 +16,7 @@ namespace scene {
 
 // ---- palette (RGB565) ----
 inline uint16_t BG, HOODIE, HOODIE_HI, FACE, GREEN, GREEN_DIM, GREEN_HI,
-                AMBER, STATUS, CODE_DIM, LAPTOP_C, MATRIX, SCAN;
+                AMBER, AMBER_MID, AMBER_DIM, STATUS, CODE_DIM, LAPTOP_C, MATRIX, SCAN;
 
 inline void initPalette(LGFX_Sprout& t) {
   BG        = t.color565(10, 14, 20);
@@ -27,6 +27,8 @@ inline void initPalette(LGFX_Sprout& t) {
   GREEN_DIM = t.color565(43, 191, 106);
   GREEN_HI  = t.color565(201, 255, 222);
   AMBER     = t.color565(255, 180, 84);
+  AMBER_MID = t.color565(185, 125, 52);
+  AMBER_DIM = t.color565(110, 72, 28);
   STATUS    = t.color565(95, 211, 160);
   CODE_DIM  = t.color565(31, 143, 80);
   LAPTOP_C  = t.color565(14, 22, 32);
@@ -146,7 +148,7 @@ inline void drawBackground(LGFX_Sprout& t) {
 //   bodyRy  : vertical radius of the torso (breathing squash)
 template <typename GFX>
 inline void drawCreature(GFX& g, int dx, int dy, int eyeH, int bodyRy,
-                         EyeMode eyeMode = EYE_NORMAL, Mouth mouth = MOUTH_SMILE) {
+                         EyeMode eyeMode, Mouth mouth, uint16_t promptCol) {
   int cx = CX + dx;
 
   // torso
@@ -196,9 +198,9 @@ inline void drawCreature(GFX& g, int dx, int dy, int eyeH, int bodyRy,
   g.fillCircle(cx - 18, 328 + dy, 4, GREEN);
   g.fillCircle(cx + 18, 328 + dy, 4, GREEN);
 
-  // chest prompt
+  // chest prompt (pulses amber while hacking)
   g.setFont(&fonts::FreeMonoBold9pt7b);
-  g.setTextColor(GREEN, HOODIE);
+  g.setTextColor(promptCol, HOODIE);
   g.setTextDatum(textdatum_t::middle_center);
   g.drawString(">_", cx, 352 + dy);
 }

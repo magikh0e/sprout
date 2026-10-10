@@ -222,6 +222,7 @@ void loop() {
     int eyeH   = scene::EYE_FULL;
     scene::EyeMode eyeMode = scene::EYE_NORMAL;
     scene::Mouth   mouth   = scene::MOUTH_SMILE;
+    uint16_t promptCol = scene::GREEN;
 
     if (mood == IDLE) {
       if (!blinking && now >= nextBlink) { blinking = true; blinkStart = now; }
@@ -233,6 +234,9 @@ void loop() {
     } else if (mood == HACKING) {
       eyeH = 7;            // narrow focused slit (clearly != idle's tall eyes)
       bob  += 3;           // lean toward the laptop
+      float ph = fabsf(sinf((now % 1200) / 1200.0f * PI));   // ~0.6 Hz pulse
+      promptCol = ph > 0.66f ? scene::AMBER
+                : ph > 0.33f ? scene::AMBER_MID : scene::AMBER_DIM;
     } else {               // HAPPY / STARTLED reaction
       float p = (now - reactStart) / (float)reactDur;
       float jolt = sinf(p * PI);
@@ -244,7 +248,7 @@ void loop() {
     for (int y = 190; y < scene::SPR_Y + scene::SPR_H; y += 40)
       creature.drawFastHLine(0, y - scene::SPR_Y, scene::SPR_W, scene::SCAN);
     scene::drawCreature(creature, -scene::SPR_X, -scene::SPR_Y + bob,
-                        eyeH, bodyRy, eyeMode, mouth);
+                        eyeH, bodyRy, eyeMode, mouth, promptCol);
     creature.pushSprite(scene::SPR_X, scene::SPR_Y);
   }
 
