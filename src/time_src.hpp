@@ -51,7 +51,12 @@ inline float sleepiness(float h) {
 inline void clockStr(float h, char* out) {
   int hh = (int)h;
   int mm = (int)((h - hh) * 60) % 60;
-  sprintf(out, "%02d:%02d", hh, mm);
+  if (settings::hour24) {
+    sprintf(out, "%02d:%02d", hh, mm);
+  } else {
+    int h12 = hh % 12; if (h12 == 0) h12 = 12;
+    sprintf(out, "%d:%02d%c", h12, mm, hh < 12 ? 'a' : 'p');
+  }
 }
 
 }  // namespace timesrc

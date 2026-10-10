@@ -33,6 +33,7 @@ inline String   tz          = TZ_INFO;
 inline String   lat         = WX_LAT;
 inline String   lon         = WX_LON;
 inline bool     demo        = DEMO_DAYNIGHT;
+inline bool     hour24      = CLOCK_24H;      // true = 24h clock, false = 12h am/pm
 inline uint32_t dayMs       = DEMO_DAY_MS;
 inline uint32_t hackAfterMs = 60000;
 inline String   configUrl   = CONFIG_URL;
@@ -52,11 +53,15 @@ inline bool validCoord(const String& s) {
 // allowSecrets: Wi-Fi creds are only honoured from a local source (SD card),
 // never from a remote URL — a URL config must not carry a password.
 inline void merge(JsonDocument& d, bool allowSecrets) {
-  if (allowSecrets) {
-    if (d.containsKey("wifi_ssid")) ssid = d["wifi_ssid"].as<String>();
-    if (d.containsKey("wifi_pass")) pass = d["wifi_pass"].as<String>();
+  // Wi-Fi defaults to config.h. Only a local (SD) config that actually names
+  // a network replaces it — and then ssid+pass move together, so you can't end
+  // up with the SD ssid against the config.h password.
+  if (allowSecrets && d.containsKey("wifi_ssid")) {
+    ssid = d["wifi_ssid"].as<String>();
+    pass = d.containsKey("wifi_pass") ? d["wifi_pass"].as<String>() : String("");
   }
   if (d.containsKey("tz"))           tz   = d["tz"].as<String>();
+  if (d.containsKey("hour24"))       hour24 = d["hour24"].as<bool>();
   if (d.containsKey("lat")) { String v = d["lat"].as<String>(); if (validCoord(v)) lat = v; }
   if (d.containsKey("lon")) { String v = d["lon"].as<String>(); if (validCoord(v)) lon = v; }
   if (d.containsKey("demo"))         demo = d["demo"].as<bool>();

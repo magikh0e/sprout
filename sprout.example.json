@@ -2,6 +2,7 @@
   "wifi_ssid": "your-network",
   "wifi_pass": "your-password",
   "tz": "HST10",
+  "hour24": true,
   "lat": "21.3069",
   "lon": "-157.8583",
   "demo": false,
