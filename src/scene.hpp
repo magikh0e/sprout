@@ -67,15 +67,16 @@ inline void say(LGFX_Sprout& t, const String& msg) {
   drawLog(t);
 }
 
-inline void drawStatusBar(LGFX_Sprout& t, const char* clock, bool awake) {
+inline void drawStatusBar(LGFX_Sprout& t, const char* clock, bool hacking) {
   t.fillRect(0, 0, 320, 34, BG);
   t.setFont(&fonts::FreeMono9pt7b);
-  t.setTextColor(STATUS, BG);
   t.setTextDatum(textdatum_t::top_left);
+  t.setTextColor(STATUS, BG);
   t.drawString(clock, 12, 10);
   t.setTextDatum(textdatum_t::top_right);
-  t.drawString(awake ? "online" : "afk zzz", 300, 10);
-  t.fillCircle(312, 17, 4, awake ? GREEN : CODE_DIM);
+  t.setTextColor(hacking ? AMBER : STATUS, BG);
+  t.drawString(hacking ? "hacking" : "online", 300, 10);
+  t.fillCircle(312, 17, 4, hacking ? AMBER : GREEN);
 }
 
 // Is this touch on the creature (head + torso + laptop), not empty screen?
@@ -134,7 +135,7 @@ inline void drawCursor(LGFX_Sprout& t, bool on) {
 inline void drawBackground(LGFX_Sprout& t) {
   t.fillScreen(BG);
   drawMatrix(t);
-  drawStatusBar(t, "--:--", true);
+  drawStatusBar(t, "--:--", false);
   drawLog(t);
   drawLaptop(t);
   drawPromptLine(t);

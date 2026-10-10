@@ -64,6 +64,7 @@ int      pokeCount = 0;
 float    sleepy = 0.0f;         // 0 day .. 1 deep night
 char     lastClock[6] = "";
 int      curBrightness = -1;
+int      lastHacking = -1;      // status-bar indicator state (-1 = unset)
 
 bool isNight()   { return sleepy > 0.5f; }
 bool inSession() { return mood == HACKING || isNight(); }   // hacking "zone"
@@ -187,11 +188,13 @@ void loop() {
   int bright = 200 - (int)(sleepy * 70);
   if (bright != curBrightness) { tft.setBrightness(bright); curBrightness = bright; }
 
-  // --- live clock in status bar ---
+  // --- status bar: live clock + hacking/online indicator ---
   char clk[6]; timesrc::clockStr(hour, clk);
-  if (strcmp(clk, lastClock) != 0) {
+  int hacking = inSession() ? 1 : 0;
+  if (strcmp(clk, lastClock) != 0 || hacking != lastHacking) {
     strcpy(lastClock, clk);
-    scene::drawStatusBar(tft, clk, true);
+    lastHacking = hacking;
+    scene::drawStatusBar(tft, clk, hacking);
   }
 
   // --- laptop typing while hacking ---
