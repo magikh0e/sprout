@@ -10,7 +10,7 @@
 #include <WiFiClientSecure.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
-#include "config.h"
+#include "settings.hpp"
 
 namespace weather {
 
@@ -64,8 +64,8 @@ inline bool fetch() {
   WiFiClientSecure client;
   client.setInsecure();                      // skip cert check (public data)
   HTTPClient http;
-  String url = "https://api.open-meteo.com/v1/forecast?latitude=" WX_LAT
-               "&longitude=" WX_LON
+  String url = "https://api.open-meteo.com/v1/forecast?latitude=" + settings::lat +
+               "&longitude=" + settings::lon +
                "&current=temperature_2m,weather_code&temperature_unit=fahrenheit";
 
   bool changed = false;

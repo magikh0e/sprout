@@ -1,55 +1,46 @@
-// Sprout — time + day/night source.
+// Sprout — time + day/night source, driven by runtime settings.
 //
-// hourOfDay() returns 0..24. sleepiness(h) returns 0 (wide awake) .. 1 (deep
-// night) with smooth dusk/dawn ramps. In demo mode the day runs fast so the
-// behaviour is visible immediately; otherwise it uses NTP (if Wi-Fi creds are
-// set) or a free-running offline clock.
+// connectWifi() and startNtp() are split so a web config can be fetched in
+// between (after Wi-Fi, before the clock is set). hourOfDay() returns 0..24;
+// sleepiness(h) ramps 0 (awake) .. 1 (deep night) with dusk/dawn transitions.
 
 #pragma once
 #include <Arduino.h>
 #include <time.h>
-#include "config.h"
-
-#if !DEMO_DAYNIGHT
 #include <WiFi.h>
-#endif
+#include "settings.hpp"
 
 namespace timesrc {
 
 inline bool haveReal = false;
 
-inline void begin() {
-#if !DEMO_DAYNIGHT
-  if (strlen(WIFI_SSID) > 0) {
-    WiFi.mode(WIFI_STA);
-    WiFi.begin(WIFI_SSID, WIFI_PASS);
-    uint32_t t0 = millis();
-    while (WiFi.status() != WL_CONNECTED && millis() - t0 < 10000) delay(200);
-    if (WiFi.status() == WL_CONNECTED) {
-      configTzTime(TZ_INFO, "pool.ntp.org", "time.nist.gov");   // DST-aware
-      struct tm tm;
-      haveReal = getLocalTime(&tm, 8000);
-      Serial.printf("[time] wifi ok, ntp=%d\n", haveReal);
-    } else {
-      Serial.println("[time] wifi failed, offline clock");
-    }
-  }
-#endif
+inline void connectWifi() {
+  if (settings::demo || settings::ssid.isEmpty()) return;
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(settings::ssid.c_str(), settings::pass.c_str());
+  uint32_t t0 = millis();
+  while (WiFi.status() != WL_CONNECTED && millis() - t0 < 10000) delay(200);
+  Serial.printf("[time] wifi %s\n", WiFi.status() == WL_CONNECTED ? "ok" : "failed");
+}
+
+inline void startNtp() {
+  if (settings::demo || WiFi.status() != WL_CONNECTED) return;
+  configTzTime(settings::tz.c_str(), "pool.ntp.org", "time.nist.gov");   // DST-aware
+  struct tm tm;
+  haveReal = getLocalTime(&tm, 8000);
+  Serial.printf("[time] ntp=%d\n", haveReal);
 }
 
 inline float hourOfDay() {
-#if DEMO_DAYNIGHT
-  return (millis() % DEMO_DAY_MS) / (float)DEMO_DAY_MS * 24.0f;
-#else
+  if (settings::demo)
+    return (millis() % settings::dayMs) / (float)settings::dayMs * 24.0f;
   if (haveReal) {
     struct tm tm;
     if (getLocalTime(&tm, 0)) return tm.tm_hour + tm.tm_min / 60.0f;
   }
   return fmodf(12.0f + millis() / 3600000.0f, 24.0f);   // offline, real speed
-#endif
 }
 
-// 0 = awake, 1 = asleep, with 2-hour dusk (21-23) and dawn (05-07) ramps.
 inline float sleepiness(float h) {
   if (h >= 7 && h < 21) return 0.0f;
   if (h >= 21 && h < 23) return (h - 21) / 2.0f;

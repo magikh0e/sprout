@@ -22,6 +22,25 @@ touch, chats in IRC style, and has a day/night rhythm with a hacking mode.
 Time is demo-fast by default (one day per `DEMO_DAY_MS`); set `DEMO_DAYNIGHT 0`
 and fill the Wi-Fi/timezone fields in `src/config.h` for real NTP time.
 
+## Configuration
+
+Settings layer, later overriding earlier:
+
+1. **Compiled defaults** — `src/config.h` (gitignored; copy from
+   `src/config.example.h`).
+2. **SD card** — drop a `/sprout.json` on a FAT32 card (see
+   `sprout.example.json`). Read at boot, before Wi-Fi, so it can set the
+   network itself. Change Wi-Fi, location, timezone, or behaviour with no
+   reflash.
+3. **Web URL** — if the config has a `config_url`, that JSON is fetched after
+   Wi-Fi connects and merged on top (retune timezone / location / behaviour
+   remotely; Wi-Fi itself applies next boot).
+
+Keys: `wifi_ssid`, `wifi_pass`, `tz` (POSIX), `lat`, `lon`, `demo` (bool),
+`day_ms`, `hack_after_s`, `config_url`. All optional — anything omitted keeps
+the compiled default. The SD slot is on the board's own VSPI (CS 5), separate
+from the display, so it never fights the screen for the bus.
+
 Built in five steps: bring-up → static scene + IRC log → breathe/blink →
 touch reactions → day/night + hacking mode.
 

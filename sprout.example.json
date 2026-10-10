@@ -1,0 +1,10 @@
+{
+  "wifi_ssid": "your-network",
+  "wifi_pass": "your-password",
+  "tz": "HST10",
+  "lat": "21.3069",
+  "lon": "-157.8583",
+  "demo": false,
+  "hack_after_s": 60,
+  "config_url": ""
+}

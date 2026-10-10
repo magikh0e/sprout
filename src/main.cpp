@@ -14,6 +14,7 @@
 #include <math.h>
 #include "LGFX_Sprout.hpp"
 #include "scene.hpp"
+#include "settings.hpp"
 #include "time_src.hpp"
 #include "store.hpp"
 #include "weather.hpp"
@@ -28,7 +29,7 @@ constexpr int PIN_RGB_G = 17;
 constexpr int PIN_RGB_B = 16;
 constexpr int PIN_SPK   = 26;
 constexpr int SPK_CH    = 0;
-constexpr uint32_t HACK_AFTER = 60000;   // daytime: only hacks after a minute left alone
+// daytime idle -> hacking threshold lives in settings::hackAfterMs (runtime)
 
 void rgbWrite(bool r, bool g, bool b) {
   digitalWrite(PIN_RGB_R, r ? LOW : HIGH);
@@ -140,6 +141,7 @@ void setup() {
 #endif
 
   store::begin();
+  settings::begin();            // compiled defaults + SD /sprout.json
   scene::initPalette(tft);
   scene::drawBackground(tft);
   if (store::boots <= 1) {
@@ -152,8 +154,10 @@ void setup() {
   if (!creature.createSprite(scene::SPR_W, scene::SPR_H))
     Serial.println("[Sprout] sprite alloc failed");
 
-  timesrc::begin();
-  if (weather::fetch()) {                    // first pull
+  timesrc::connectWifi();                    // uses settings ssid/pass
+  settings::loadFromUrl(settings::configUrl);// optional remote override
+  timesrc::startNtp();                       // uses (possibly remote) tz
+  if (weather::fetch()) {                    // uses settings lat/lon
     weather::statusStr(wxStr, sizeof(wxStr));
     scene::say(tft, weather::line(weather::cond));
   }
@@ -191,7 +195,7 @@ void loop() {
   bool reacting = (mood == HAPPY || mood == STARTLED) && now < reactStart + reactDur;
   if (!reacting) {
     if (isNight())                                  mood = HACKING;
-    else if (now - lastInteraction > HACK_AFTER)    mood = HACKING;
+    else if (now - lastInteraction > settings::hackAfterMs) mood = HACKING;
     else                                            mood = IDLE;
   }
 
