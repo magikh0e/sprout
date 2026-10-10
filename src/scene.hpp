@@ -69,22 +69,17 @@ inline void say(LGFX_Sprout& t, const String& msg) {
   drawLog(t);
 }
 
-inline void drawStatusBar(LGFX_Sprout& t, const char* clock, bool hacking,
-                          const char* wx = "") {
+inline void drawStatusBar(LGFX_Sprout& t, const char* clock, const char* wx = "") {
   t.fillRect(0, 0, 320, 34, BG);
   t.setFont(&fonts::FreeMono9pt7b);
   t.setTextColor(STATUS, BG);
   t.setTextDatum(textdatum_t::top_left);
   t.drawString(clock, 12, 10);
   if (wx && wx[0]) {
-    t.setTextDatum(textdatum_t::top_center);
+    t.setTextDatum(textdatum_t::top_right);
     t.setTextColor(CODE_DIM, BG);
-    t.drawString(wx, 168, 10);
+    t.drawString(wx, 308, 10);
   }
-  t.setTextDatum(textdatum_t::top_right);
-  t.setTextColor(hacking ? AMBER : STATUS, BG);
-  t.drawString(hacking ? "hacking" : "online", 300, 10);
-  t.fillCircle(312, 17, 4, hacking ? AMBER : GREEN);
 }
 
 // Is this touch on the creature (head + torso + laptop), not empty screen?
@@ -128,25 +123,31 @@ inline void typeCode(LGFX_Sprout& t, int step) {
   t.fillRect(cx, 415, 5, 8, (step & 1) ? AMBER : FACE);
 }
 
-inline void drawPromptLine(LGFX_Sprout& t) {
+inline int promptCursorX = 148;   // x where the cursor sits, after the prompt
+
+// Shell prompt reflects his status: sprout@hacking:~$, sprout@online:~$, etc.
+inline void drawPromptLine(LGFX_Sprout& t, const char* status) {
+  t.fillRect(0, 452, 320, 24, BG);
   t.setFont(&fonts::FreeMono9pt7b);
   t.setTextColor(CODE_DIM, BG);
   t.setTextDatum(textdatum_t::top_left);
-  t.drawString("sprout@desk:~$", 12, 456);
+  String s = String("sprout@") + status + ":~$";
+  t.drawString(s.c_str(), 12, 456);
+  promptCursorX = 12 + t.textWidth(s.c_str()) + 3;
 }
 
 inline void drawCursor(LGFX_Sprout& t, bool on) {
-  t.fillRect(148, 456, 10, 15, on ? AMBER : BG);
+  t.fillRect(promptCursorX, 456, 10, 15, on ? AMBER : BG);
 }
 
 // All static furniture (no creature — that comes from the sprite).
 inline void drawBackground(LGFX_Sprout& t) {
   t.fillScreen(BG);
   drawMatrix(t);
-  drawStatusBar(t, "--:--", false);
+  drawStatusBar(t, "--:--");
   drawLog(t);
   drawLaptop(t);
-  drawPromptLine(t);
+  drawPromptLine(t, "online");
 }
 
 // ---- the creature, drawn into canvas g at pixel offset ( dx, dy ) ----

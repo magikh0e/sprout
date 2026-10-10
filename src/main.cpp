@@ -66,9 +66,18 @@ int      pokeCount = 0;
 float    sleepy = 0.0f;         // 0 day .. 1 deep night
 char     lastClock[6] = "";
 int      curBrightness = -1;
-int      lastHacking = -1;      // status-bar indicator state (-1 = unset)
 char     wxStr[16] = "";        // weather string for the status bar
+char     lastStatus[10] = "";   // last shell-prompt status word
 uint32_t nextWx = 0;            // next weather fetch
+
+const char* statusWord(Mood m) {
+  switch (m) {
+    case HAPPY:    return "happy";
+    case STARTLED: return "annoyed";
+    case HACKING:  return "hacking";
+    default:       return "online";
+  }
+}
 
 bool isNight()   { return sleepy > 0.5f; }
 bool inSession() { return mood == HACKING || isNight(); }   // hacking "zone"
@@ -214,13 +223,18 @@ void loop() {
     }
   }
 
-  // --- status bar: live clock + weather + hacking/online indicator ---
+  // --- status bar: live clock + weather ---
   char clk[6]; timesrc::clockStr(hour, clk);
-  int hacking = inSession() ? 1 : 0;
-  if (strcmp(clk, lastClock) != 0 || hacking != lastHacking) {
+  if (strcmp(clk, lastClock) != 0) {
     strcpy(lastClock, clk);
-    lastHacking = hacking;
-    scene::drawStatusBar(tft, clk, hacking, wxStr);
+    scene::drawStatusBar(tft, clk, wxStr);
+  }
+
+  // --- shell prompt reflects his status: sprout@<status>:~$ ---
+  const char* sw = statusWord(mood);
+  if (strcmp(sw, lastStatus) != 0) {
+    strcpy(lastStatus, sw);
+    scene::drawPromptLine(tft, sw);
   }
 
   // --- laptop typing while hacking ---
