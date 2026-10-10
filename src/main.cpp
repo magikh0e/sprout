@@ -156,6 +156,31 @@ void onPoke() {
   }
 }
 
+// Optional custom boot image from SD: /splash.jpg or /splash.png (320x480).
+// Lets you drop in any logo without reflashing; falls back to the vector logo.
+bool splashFromSD() {
+  settings::sdSPI.begin(18, 19, 23, 5);
+  if (!SD.begin(5, settings::sdSPI)) { SD.end(); return false; }
+
+  const char* path = SD.exists("/splash.jpg") ? "/splash.jpg"
+                   : SD.exists("/splash.png") ? "/splash.png" : nullptr;
+  bool ok = false;
+  if (path) {
+    File f = SD.open(path);
+    size_t len = f ? f.size() : 0;
+    if (len && len < 300000) {                     // read into RAM, then decode
+      uint8_t* buf = (uint8_t*)malloc(len);
+      if (buf && f.read(buf, len) == (int)len) {
+        ok = path[7] == 'j' ? tft.drawJpg(buf, len) : tft.drawPng(buf, len);
+      }
+      free(buf);
+    }
+    if (f) f.close();
+  }
+  SD.end();
+  return ok;
+}
+
 void setup() {
   Serial.begin(115200);
   delay(150);
@@ -182,16 +207,14 @@ void setup() {
   return;
 #endif
 
+  // --- boot splash (SD image or vector logo), shown during network bring-up ---
+  scene::initPalette(tft);
+  tft.setBrightness(200);
+  if (!splashFromSD()) scene::drawSplash(tft);
+  uint32_t splashUntil = millis() + 1800;
+
   store::begin();
   settings::begin();            // compiled defaults + SD /sprout.json
-  scene::initPalette(tft);
-  scene::drawBackground(tft);
-  if (store::boots <= 1) {
-    scene::say(tft, "hey, i'm sprout");
-  } else {
-    scene::say(tft, ("back! boot #" + String(store::boots)).c_str());
-  }
-
   creature.setColorDepth(16);
   if (!creature.createSprite(scene::SPR_W, scene::SPR_H))
     Serial.println("[Sprout] sprite alloc failed");
@@ -201,13 +224,17 @@ void setup() {
   timesrc::connectWifi();                    // uses settings ssid/pass
   settings::loadFromUrl(settings::configUrl);// optional remote override
   timesrc::startNtp();                       // uses (possibly remote) tz
-  if (weather::fetch()) {                    // uses settings lat/lon
-    weather::statusStr(wxStr, sizeof(wxStr));
-    scene::say(tft, weather::line(weather::cond));
-  }
+  if (weather::fetch()) weather::statusStr(wxStr, sizeof(wxStr));
   feeds::fetchHN();                          // headlines for the ticker
   monitor::enabled = settings::monitorHost.length() > 0;
   if (monitor::enabled) { monitor::up = monitor::check(); monitor::known = true; }
+
+  while (millis() < splashUntil) delay(10);  // hold the splash a beat
+  scene::drawBackground(tft);
+  if (store::boots <= 1) scene::say(tft, "hey, i'm sprout");
+  else scene::say(tft, ("back! boot #" + String(store::boots)).c_str());
+  if (weather::valid) scene::say(tft, weather::line(weather::cond));
+
   nextWx  = millis() + 1200000UL;            // weather refresh 20 min
   nextHN  = millis() + 1800000UL;            // headline refresh 30 min
   nextMon = millis() + 60000UL;              // host check 60 s

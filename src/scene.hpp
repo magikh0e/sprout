@@ -217,4 +217,65 @@ inline void drawCreature(GFX& g, int dx, int dy, int eyeH, int bodyRy,
   g.drawString(">_", cx, 352 + dy);
 }
 
+// Boot splash: a retro-synthwave Sprout title card (chrome wordmark, grid
+// horizon, scanlines). Shown while the network comes up.
+inline void drawSplash(LGFX_Sprout& t) {
+  uint16_t deep  = t.color565(8, 6, 16);
+  uint16_t grid  = t.color565(170, 45, 165);
+  uint16_t gridd = t.color565(70, 22, 82);
+  t.fillScreen(deep);
+
+  // --- synthwave grid horizon (lower third) ---
+  int hy = 352;
+  for (int i = 1; i < 13; i++) {
+    int y = hy + (int)(i * i * 1.05f);
+    if (y > 479) break;
+    t.drawFastHLine(0, y, 320, i < 4 ? grid : gridd);
+  }
+  for (int gx = -240; gx <= 560; gx += 40) t.drawLine(160, hy, gx, 480, gridd);
+  t.drawFastHLine(0, hy, 320, grid);
+
+  // --- creature bust logo ---
+  t.fillEllipse(160, 120, 54, 52, HOODIE);
+  t.drawEllipse(160, 120, 54, 52, HOODIE_HI);
+  t.fillEllipse(160, 128, 42, 40, FACE);
+  t.fillSmoothRoundRect(134, 110, 18, 30, 8, GREEN);
+  t.fillSmoothRoundRect(168, 110, 18, 30, 8, GREEN);
+  t.fillSmoothRoundRect(138, 115, 6, 9, 3, GREEN_HI);
+  t.fillSmoothRoundRect(172, 115, 6, 9, 3, GREEN_HI);
+
+  // --- chrome wordmark (horizontal colour bands via clip rects) ---
+  const char* word = "SPROUT";
+  t.setFont(&fonts::FreeSansBold24pt7b);
+  t.setTextDatum(textdatum_t::top_center);
+  int topY = 214;
+  int h = t.fontHeight();
+  t.setTextColor(t.color565(10, 10, 22));
+  t.drawString(word, 162, topY + 3);                 // drop shadow
+  uint16_t bands[6] = {
+    t.color565(175, 245, 255), t.color565(45, 200, 255), t.color565(255, 255, 255),
+    t.color565(255, 255, 255), t.color565(255, 120, 185), t.color565(205, 40, 110)
+  };
+  int bh = (h + 5) / 6;
+  for (int i = 0; i < 6; i++) {
+    t.setClipRect(0, topY + i * bh, 320, bh);
+    t.setTextColor(bands[i]);
+    t.drawString(word, 160, topY);
+  }
+  t.clearClipRect();
+
+  // --- tagline + version ---
+  t.setFont(&fonts::FreeMono9pt7b);
+  t.setTextColor(t.color565(45, 200, 255));
+  t.setTextDatum(textdatum_t::top_center);
+  t.drawString("// ambient desk hacker", 160, topY + h + 12);
+
+  // --- CRT scanlines over the top half ---
+  for (int y = 0; y < 206; y += 4) t.drawFastHLine(0, y, 320, t.color565(4, 4, 10));
+
+  t.setTextColor(CODE_DIM, deep);
+  t.setTextDatum(textdatum_t::bottom_right);
+  t.drawString("v1.0", 312, 474);
+}
+
 }  // namespace scene
