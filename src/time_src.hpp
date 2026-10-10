@@ -20,6 +20,7 @@ inline void connectWifi() {
   WiFi.begin(settings::ssid.c_str(), settings::pass.c_str());
   uint32_t t0 = millis();
   while (WiFi.status() != WL_CONNECTED && millis() - t0 < 10000) delay(200);
+  if (WiFi.status() == WL_CONNECTED) WiFi.setSleep(false);   // reliable scans
   Serial.printf("[time] wifi %s\n", WiFi.status() == WL_CONNECTED ? "ok" : "failed");
 }
 

@@ -12,6 +12,7 @@
 
 #include <Arduino.h>
 #include <math.h>
+#include <vector>
 #include "LGFX_Sprout.hpp"
 #include "scene.hpp"
 #include "settings.hpp"
@@ -113,6 +114,16 @@ const char* statusWord(Mood m) {
 
 bool isNight()   { return sleepy > 0.5f; }
 bool inSession() { return mood == HACKING || isNight(); }   // hacking "zone"
+
+// --- Wi-Fi scan during hacking: announce new SSIDs ---
+std::vector<String> seenSSIDs;     // networks already announced
+std::vector<String> ssidQueue;     // new ones waiting to be spoken
+uint32_t nextScan = 0, nextScanSay = 0;
+
+bool seenSSID(const String& s) {
+  for (auto& x : seenSSIDs) if (x == s) return true;
+  return false;
+}
 
 void onPoke() {
   uint32_t now = millis();
@@ -289,6 +300,30 @@ void loop() {
       }
     }
     monitor::up = nowUp; monitor::known = true;
+  }
+
+  // --- Wi-Fi scan while hacking: find new SSIDs (sync; async is unreliable
+  //     while connected). ~1.5s, every 45s — the brief pause reads as scanning.
+  if (mood == HACKING && !settings::demo && WiFi.status() == WL_CONNECTED &&
+      now >= nextScan) {
+    nextScan = now + 45000;
+    int n = WiFi.scanNetworks(false, false, false, 120);   // 120ms/channel
+    int added = 0;
+    for (int i = 0; i < n && added < 4; i++) {              // cap per scan
+      String s = WiFi.SSID(i);
+      if (s.length() && !seenSSID(s) && seenSSIDs.size() < 200) {
+        seenSSIDs.push_back(s);
+        ssidQueue.push_back(s);
+        added++;
+      }
+    }
+    WiFi.scanDelete();
+    Serial.printf("[scan] %d nets, %d new\n", n, added);
+  }
+  if (mood == HACKING && !ssidQueue.empty() && now >= nextScanSay) {
+    scene::say(tft, "net: " + ssidQueue.front());
+    ssidQueue.erase(ssidQueue.begin());
+    nextScanSay = now + 6000;
   }
 
   // --- status bar: live clock + weather ---
