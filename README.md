@@ -85,3 +85,7 @@ Then on the board:
   a thumb: the value should swing a lot. If it barely moves, the LDR isn't on 34.
 - **RGB LED** — cycles red → green → blue → off, once a second, with the pin
   it's driving labelled on screen. Confirm the physical colour matches the label.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
