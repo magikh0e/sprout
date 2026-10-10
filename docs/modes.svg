@@ -1,0 +1,99 @@
+<svg width="680" viewBox="0 0 680 384" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>Sprout main screen modes</title>
+<desc>Three device mockups of the ambient pet: online idle with chat, hacking mode with Wi-Fi scanning and laptop code, and annoyed after being poked.</desc>
+<defs>
+<clipPath id="sc"><rect x="0" y="0" width="196" height="294" rx="6"/></clipPath>
+</defs>
+<rect x="0" y="0" width="680" height="384" fill="none"/>
+<text x="340" y="22" text-anchor="middle" fill="#8a8a85" font-family="monospace" font-size="13">sprout — the same creature across moods</text>
+
+<g transform="translate(18,36)">
+<rect x="-5" y="-5" width="206" height="304" rx="14" fill="#05070a" stroke="#17241d" stroke-width="2"/>
+<rect x="0" y="0" width="196" height="294" rx="6" fill="#0a0e14"/>
+<g clip-path="url(#sc)" font-family="monospace">
+<text x="8" y="17" fill="#5fd3a0" font-size="11">6:24p</text>
+<text x="188" y="17" text-anchor="end" fill="#1f8f50" font-size="11">77F cloudy</text>
+<text x="8" y="44" fill="#39ff6a" font-size="11">&lt;sprout&gt;</text>
+<text x="66" y="44" fill="#5fd3a0" font-size="11">sunny out :)</text>
+<text x="8" y="60" fill="#39ff6a" font-size="11">&lt;sprout&gt;</text>
+<text x="66" y="60" fill="#5fd3a0" font-size="11">pokes: 12</text>
+<text x="8" y="92" fill="#2bbf6a" font-size="10">HN: Show HN: a tiny...</text>
+<ellipse cx="98" cy="150" rx="34" ry="33" fill="#15291f" stroke="#244a35"/>
+<ellipse cx="98" cy="210" rx="42" ry="26" fill="#15291f"/>
+<ellipse cx="98" cy="155" rx="26" ry="25" fill="#071009"/>
+<rect x="80" y="140" width="14" height="26" rx="6" fill="#39ff6a"/>
+<rect x="102" y="140" width="14" height="26" rx="6" fill="#39ff6a"/>
+<rect x="83" y="144" width="5" height="7" rx="2" fill="#c9ffde"/>
+<rect x="105" y="144" width="5" height="7" rx="2" fill="#c9ffde"/>
+<path d="M90 172 Q98 178 106 172" fill="none" stroke="#2bbf6a" stroke-width="2.5" stroke-linecap="round"/>
+<text x="98" y="204" text-anchor="middle" fill="#39ff6a" font-size="13" font-weight="bold">&gt;_</text>
+<rect x="64" y="226" width="68" height="24" rx="3" fill="#0e1620" stroke="#244a35"/>
+<rect x="72" y="231" width="52" height="14" rx="2" fill="#07120c"/>
+<line x1="76" y1="235" x2="98" y2="235" stroke="#39ff6a" stroke-width="1.5"/>
+<line x1="76" y1="240" x2="110" y2="240" stroke="#2bbf6a" stroke-width="1.5"/>
+<text x="8" y="282" fill="#1f8f50" font-size="11">sprout@online:~$</text>
+<rect x="130" y="273" width="6" height="11" fill="#ffb454"/>
+</g>
+</g>
+<text x="116" y="366" text-anchor="middle" fill="#5fd3a0" font-family="monospace" font-size="14">online · idle</text>
+
+<g transform="translate(242,36)">
+<rect x="-5" y="-5" width="206" height="304" rx="14" fill="#05070a" stroke="#17241d" stroke-width="2"/>
+<rect x="0" y="0" width="196" height="294" rx="6" fill="#0a0e14"/>
+<g clip-path="url(#sc)" font-family="monospace">
+<text x="8" y="17" fill="#5fd3a0" font-size="11">1:08a</text>
+<text x="188" y="17" text-anchor="end" fill="#1f8f50" font-size="11">72F clear</text>
+<text x="8" y="44" fill="#39ff6a" font-size="11">&lt;sprout&gt;</text>
+<text x="66" y="44" fill="#5fd3a0" font-size="11">&gt; night shift</text>
+<text x="8" y="60" fill="#39ff6a" font-size="11">&lt;sprout&gt;</text>
+<text x="66" y="60" fill="#5fd3a0" font-size="11">net: Starbucks</text>
+<text x="8" y="76" fill="#39ff6a" font-size="11">&lt;sprout&gt;</text>
+<text x="66" y="76" fill="#5fd3a0" font-size="11">net: FBI_Van</text>
+<text x="8" y="100" fill="#2bbf6a" font-size="10">HN: nmap just shipped...</text>
+<ellipse cx="98" cy="152" rx="34" ry="33" fill="#15291f" stroke="#244a35"/>
+<ellipse cx="98" cy="210" rx="42" ry="27" fill="#15291f"/>
+<ellipse cx="98" cy="157" rx="26" ry="25" fill="#071009"/>
+<rect x="80" y="154" width="15" height="6" rx="3" fill="#39ff6a"/>
+<rect x="101" y="154" width="15" height="6" rx="3" fill="#39ff6a"/>
+<text x="98" y="202" text-anchor="middle" fill="#ffb454" font-size="13" font-weight="bold">&gt;_</text>
+<rect x="64" y="226" width="68" height="24" rx="3" fill="#0e1620" stroke="#244a35"/>
+<rect x="72" y="231" width="52" height="14" rx="2" fill="#07120c"/>
+<line x1="76" y1="235" x2="104" y2="235" stroke="#39ff6a" stroke-width="1.5"/>
+<line x1="76" y1="240" x2="96" y2="240" stroke="#2bbf6a" stroke-width="1.5"/>
+<rect x="100" y="237" width="4" height="6" fill="#ffb454"/>
+<text x="8" y="282" fill="#1f8f50" font-size="11">sprout@hacking:~$</text>
+<rect x="140" y="273" width="6" height="11" fill="#ffb454"/>
+</g>
+</g>
+<text x="340" y="366" text-anchor="middle" fill="#ffb454" font-family="monospace" font-size="14">hacking · wifi recon</text>
+
+<g transform="translate(466,36)">
+<rect x="-5" y="-5" width="206" height="304" rx="14" fill="#05070a" stroke="#17241d" stroke-width="2"/>
+<rect x="0" y="0" width="196" height="294" rx="6" fill="#0a0e14"/>
+<g clip-path="url(#sc)" font-family="monospace">
+<text x="8" y="17" fill="#5fd3a0" font-size="11">1:09a</text>
+<text x="188" y="17" text-anchor="end" fill="#1f8f50" font-size="11">72F clear</text>
+<text x="8" y="44" fill="#39ff6a" font-size="11">&lt;sprout&gt;</text>
+<text x="66" y="44" fill="#ff8f5a" font-size="11">quit poking!</text>
+<text x="8" y="60" fill="#39ff6a" font-size="11">&lt;sprout&gt;</text>
+<text x="66" y="60" fill="#ff8f5a" font-size="11">mid-exploit!</text>
+<ellipse cx="98" cy="150" rx="34" ry="33" fill="#15291f" stroke="#244a35"/>
+<ellipse cx="98" cy="210" rx="44" ry="28" fill="#15291f"/>
+<ellipse cx="98" cy="155" rx="26" ry="25" fill="#071009"/>
+<circle cx="86" cy="152" r="10" fill="#39ff6a"/>
+<circle cx="110" cy="152" r="10" fill="#39ff6a"/>
+<circle cx="86" cy="152" r="4" fill="#071009"/>
+<circle cx="110" cy="152" r="4" fill="#071009"/>
+<circle cx="98" cy="174" r="5" fill="#2bbf6a"/>
+<circle cx="98" cy="174" r="2.5" fill="#071009"/>
+<text x="98" y="204" text-anchor="middle" fill="#39ff6a" font-size="13" font-weight="bold">&gt;_</text>
+<rect x="64" y="226" width="68" height="24" rx="3" fill="#0e1620" stroke="#244a35"/>
+<rect x="72" y="231" width="52" height="14" rx="2" fill="#07120c"/>
+<line x1="76" y1="235" x2="104" y2="235" stroke="#2bbf6a" stroke-width="1.5"/>
+<text x="8" y="282" fill="#1f8f50" font-size="11">sprout@annoyed:~$</text>
+<rect x="146" y="273" width="6" height="11" fill="#ff5a4a"/>
+<circle cx="180" cy="12" r="5" fill="#ff5a4a"/>
+</g>
+</g>
+<text x="564" y="366" text-anchor="middle" fill="#ff8f5a" font-family="monospace" font-size="14">annoyed · disturbed</text>
+</svg>

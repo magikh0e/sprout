@@ -1,0 +1,51 @@
+<svg width="680" viewBox="0 0 680 500" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>Sprout boot splash</title>
+<desc>The 320x480 synthwave boot screen: a hooded green-eyed creature bust, a chrome SPROUT wordmark, a magenta perspective grid horizon, CRT scanlines and a v1.0 tag.</desc>
+<defs>
+<linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="#aff5ff"/>
+<stop offset="30%" stop-color="#2dc8ff"/>
+<stop offset="48%" stop-color="#ffffff"/>
+<stop offset="60%" stop-color="#ffffff"/>
+<stop offset="76%" stop-color="#ff78b9"/>
+<stop offset="100%" stop-color="#cd286e"/>
+</linearGradient>
+<pattern id="scan" width="8" height="4" patternUnits="userSpaceOnUse">
+<rect width="8" height="1.3" y="0" fill="#04040a"/>
+</pattern>
+<clipPath id="screenclip"><rect x="196" y="24" width="288" height="432" rx="6"/></clipPath>
+</defs>
+<rect x="0" y="0" width="680" height="500" fill="none"/>
+<text x="340" y="486" text-anchor="middle" fill="#8a8a85" font-family="monospace" font-size="13">boot splash — shown ~2s while Wi-Fi / NTP / weather come up</text>
+<rect x="182" y="12" width="316" height="456" rx="22" fill="#05070a" stroke="#17241d" stroke-width="2"/>
+<rect x="196" y="24" width="288" height="432" rx="6" fill="#080610"/>
+<g clip-path="url(#screenclip)">
+<g stroke="#8e2a86" stroke-width="1" fill="none">
+<line x1="196" y1="341" x2="484" y2="341" stroke="#c23bb5"/>
+<line x1="196" y1="349" x2="484" y2="349"/>
+<line x1="196" y1="360" x2="484" y2="360"/>
+<line x1="196" y1="375" x2="484" y2="375"/>
+<line x1="196" y1="395" x2="484" y2="395"/>
+<line x1="196" y1="420" x2="484" y2="420"/>
+<line x1="196" y1="450" x2="484" y2="450"/>
+<line x1="340" y1="341" x2="196" y2="456"/>
+<line x1="340" y1="341" x2="238" y2="456"/>
+<line x1="340" y1="341" x2="284" y2="456"/>
+<line x1="340" y1="341" x2="340" y2="456"/>
+<line x1="340" y1="341" x2="396" y2="456"/>
+<line x1="340" y1="341" x2="442" y2="456"/>
+<line x1="340" y1="341" x2="484" y2="456"/>
+</g>
+<ellipse cx="340" cy="132" rx="49" ry="47" fill="#15291f" stroke="#244a35" stroke-width="2"/>
+<ellipse cx="340" cy="139" rx="38" ry="36" fill="#071009"/>
+<rect x="316" y="121" width="16" height="28" rx="7" fill="#39ff6a"/>
+<rect x="348" y="121" width="16" height="28" rx="7" fill="#39ff6a"/>
+<rect x="320" y="126" width="5" height="8" rx="2" fill="#c9ffde"/>
+<rect x="352" y="126" width="5" height="8" rx="2" fill="#c9ffde"/>
+<text x="342" y="252" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold" font-size="46" fill="#0a0a16">SPROUT</text>
+<text x="340" y="250" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold" font-size="46" fill="url(#chrome)">SPROUT</text>
+<text x="340" y="278" text-anchor="middle" fill="#2dc8ff" font-family="monospace" font-size="12">// ambient desk hacker</text>
+<rect x="196" y="24" width="288" height="185" fill="url(#scan)" opacity="0.55"/>
+<text x="476" y="450" text-anchor="end" fill="#1f8f50" font-family="monospace" font-size="11">v1.0</text>
+</g>
+</svg>

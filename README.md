@@ -3,9 +3,17 @@
 An ambient desk companion for the 3.5" Cheap Yellow Display
 (Sunton **ESP32-3248S035R**, ST7796 320×480, resistive XPT2046 touch).
 
-Not a stat-tending Tamagotchi — a little creature that *lives* on your desk:
-breathes, blinks, reacts when you touch it, and knows day from night (real
-clock + the onboard light sensor), dozing when the room goes dark.
+Not a stat-tending Tamagotchi — a little hooded hacker that *lives* on your
+desk: breathes, blinks, chats in IRC style, reacts when you touch it, pulls
+night shifts, and reacts to real-world data (weather, Hacker News, a host
+monitor, Wi-Fi it can see).
+
+![Boot splash](docs/splash.svg)
+
+![Modes: online, hacking, annoyed](docs/modes.svg)
+
+*Mockups — the real panel adds the breathing/blink motion, the scrolling
+ticker, and the live clock.*
 
 ## Status
 
