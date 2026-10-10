@@ -63,6 +63,11 @@ inline void drawLog(LGFX_Sprout& t) {
   }
 }
 
+inline void clearLog(LGFX_Sprout& t) {
+  for (int i = 0; i < LOG_LINES; i++) logBuf[i] = "";
+  drawLog(t);
+}
+
 inline void say(LGFX_Sprout& t, const String& msg) {
   for (int i = 0; i < LOG_LINES - 1; i++) logBuf[i] = logBuf[i + 1];
   logBuf[LOG_LINES - 1] = msg.length() > 17 ? msg.substring(0, 17) : msg;

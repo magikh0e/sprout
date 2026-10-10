@@ -30,6 +30,11 @@
 #define MONITOR_HOST ""
 #define MONITOR_PORT 443
 
+// Remote-config signing secret ("" = off). When set, the fetched config must
+// carry a valid HMAC-SHA256 at <config_url>.sig or it's rejected. Sign with:
+//   openssl dgst -sha256 -hmac "YOUR_SECRET" sprout.json | awk '{print $2}' > sprout.json.sig
+#define CONFIG_HMAC_KEY ""
+
 // --- Demo day/night ---
 // 1 = fast simulated day (no Wi-Fi needed). 0 = real time via NTP.
 #define DEMO_DAYNIGHT 0

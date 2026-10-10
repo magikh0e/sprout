@@ -23,6 +23,7 @@
 #include <WiFiClientSecure.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
+#include "mbedtls/md.h"
 #include "config.h"
 
 namespace settings {
@@ -91,22 +92,67 @@ inline bool loadFromSD() {
   return ok;
 }
 
-// Fetch a JSON config from a URL (needs Wi-Fi up). Won't change the Wi-Fi in
-// use this session, but can retune tz / location / behaviour remotely.
-inline bool loadFromUrl(const String& url) {
-  if (url.isEmpty() || WiFi.status() != WL_CONNECTED) return false;
+inline bool httpGetBody(const String& url, String& out) {
+  if (WiFi.status() != WL_CONNECTED) return false;
   WiFiClientSecure client;
   client.setInsecure();
+  client.setHandshakeTimeout(20);
   HTTPClient http;
+  http.setConnectTimeout(20000);
   if (!http.begin(client, url)) return false;
-  bool ok = false;
-  if (http.GET() == 200) {
-    StaticJsonDocument<1024> doc;
-    if (deserializeJson(doc, http.getString()) == DeserializationError::Ok) { merge(doc, false); ok = true; source = "url"; }
-  }
+  bool ok = (http.GET() == 200);
+  if (ok) out = http.getString();
   http.end();
-  Serial.printf("[cfg] remote %s: %s\n", ok ? "merged" : "skipped", url.c_str());
   return ok;
+}
+
+inline void hmacSha256Hex(const String& key, const String& msg, char out[65]) {
+  uint8_t mac[32];
+  const mbedtls_md_info_t* info = mbedtls_md_info_from_type(MBEDTLS_MD_SHA256);
+  mbedtls_md_hmac(info, (const uint8_t*)key.c_str(), key.length(),
+                  (const uint8_t*)msg.c_str(), msg.length(), mac);
+  for (int i = 0; i < 32; i++) sprintf(out + i * 2, "%02x", mac[i]);
+  out[64] = '\0';
+}
+
+// Constant-time compare of a lowercase-hex MAC against an untrusted hex string.
+inline bool hexEqualCT(const char* mac, String sig) {
+  sig.trim();
+  if (sig.length() != 64) return false;
+  uint8_t diff = 0;
+  for (int i = 0; i < 64; i++) {
+    char c = sig[i];
+    if (c >= 'A' && c <= 'F') c += 32;          // lower-case the server value
+    diff |= (uint8_t)mac[i] ^ (uint8_t)c;
+  }
+  return diff == 0;
+}
+
+// Fetch a JSON config from a URL (needs Wi-Fi up). Never changes Wi-Fi creds.
+// If CONFIG_HMAC_KEY is set, the body must carry a valid HMAC-SHA256 at
+// <url>.sig or it is rejected.
+inline bool loadFromUrl(const String& url) {
+  if (url.isEmpty() || WiFi.status() != WL_CONNECTED) return false;
+
+  String body;
+  if (!httpGetBody(url, body)) { Serial.printf("[cfg] remote skipped: %s\n", url.c_str()); return false; }
+
+  String key = CONFIG_HMAC_KEY;
+  if (key.length()) {
+    String sig;
+    if (!httpGetBody(url + ".sig", sig)) { Serial.println("[cfg] no .sig, rejected"); return false; }
+    char mac[65];
+    hmacSha256Hex(key, body, mac);
+    if (!hexEqualCT(mac, sig)) { Serial.println("[cfg] bad signature, rejected"); return false; }
+    Serial.println("[cfg] signature ok");
+  }
+
+  StaticJsonDocument<1024> doc;
+  if (deserializeJson(doc, body) != DeserializationError::Ok) { Serial.println("[cfg] remote bad json"); return false; }
+  merge(doc, false);
+  source = "url";
+  Serial.printf("[cfg] remote merged: %s\n", url.c_str());
+  return true;
 }
 
 inline void begin() {

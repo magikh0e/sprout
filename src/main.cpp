@@ -239,6 +239,7 @@ void loop() {
 
   // entering hacking announces itself once
   if (mood == HACKING && prevMood != HACKING) {
+    scene::clearLog(tft);                      // fresh terminal when he gets to work
     scene::say(tft, isNight() ? "> night shift" : "> getting to work");
     nextType = now;
   }
