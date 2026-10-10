@@ -17,6 +17,15 @@ ticker, and the live clock.*
 
 > 🤖 Built with AI, for fun.
 
+## On real hardware
+
+<p align="center">
+  <img src="docs/hw-splash.webp" width="48%" alt="Boot splash on the CYD" />
+  <img src="docs/hw-hacking.webp" width="48%" alt="Hacking mode on the CYD" />
+</p>
+
+Boot splash, and hacking mode mid Wi-Fi recon (`net:` SSIDs, `nmap -sV lan`).
+
 ## Features
 
 - **Alive on screen** — flicker-free (off-screen sprite) breathing, randomized
