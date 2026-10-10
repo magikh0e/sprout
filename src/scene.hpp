@@ -69,12 +69,18 @@ inline void say(LGFX_Sprout& t, const String& msg) {
   drawLog(t);
 }
 
-inline void drawStatusBar(LGFX_Sprout& t, const char* clock, bool hacking) {
+inline void drawStatusBar(LGFX_Sprout& t, const char* clock, bool hacking,
+                          const char* wx = "") {
   t.fillRect(0, 0, 320, 34, BG);
   t.setFont(&fonts::FreeMono9pt7b);
-  t.setTextDatum(textdatum_t::top_left);
   t.setTextColor(STATUS, BG);
+  t.setTextDatum(textdatum_t::top_left);
   t.drawString(clock, 12, 10);
+  if (wx && wx[0]) {
+    t.setTextDatum(textdatum_t::top_center);
+    t.setTextColor(CODE_DIM, BG);
+    t.drawString(wx, 168, 10);
+  }
   t.setTextDatum(textdatum_t::top_right);
   t.setTextColor(hacking ? AMBER : STATUS, BG);
   t.drawString(hacking ? "hacking" : "online", 300, 10);

@@ -15,6 +15,10 @@
 //   Central EU  "CET-1CEST,M3.5.0,M10.5.0/3"
 #define TZ_INFO     "EST5EDT,M3.2.0,M11.1.0"
 
+// Location for weather (Open-Meteo, no API key). Find yours on any map.
+#define WX_LAT      "21.3069"
+#define WX_LON      "-157.8583"
+
 // --- Demo day/night ---
 // 1 = fast simulated day (no Wi-Fi needed). 0 = real time via NTP.
 #define DEMO_DAYNIGHT 0

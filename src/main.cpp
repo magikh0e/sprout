@@ -16,6 +16,7 @@
 #include "scene.hpp"
 #include "time_src.hpp"
 #include "store.hpp"
+#include "weather.hpp"
 
 #define TOUCH_TEST 0   // 1 = bare init + touch poll only (isolation); 0 = full app
 
@@ -66,6 +67,8 @@ float    sleepy = 0.0f;         // 0 day .. 1 deep night
 char     lastClock[6] = "";
 int      curBrightness = -1;
 int      lastHacking = -1;      // status-bar indicator state (-1 = unset)
+char     wxStr[16] = "";        // weather string for the status bar
+uint32_t nextWx = 0;            // next weather fetch
 
 bool isNight()   { return sleepy > 0.5f; }
 bool inSession() { return mood == HACKING || isNight(); }   // hacking "zone"
@@ -141,6 +144,11 @@ void setup() {
     Serial.println("[Sprout] sprite alloc failed");
 
   timesrc::begin();
+  if (weather::fetch()) {                    // first pull
+    weather::statusStr(wxStr, sizeof(wxStr));
+    scene::say(tft, weather::line(weather::cond));
+  }
+  nextWx = millis() + 1200000UL;             // refresh every 20 min
   lastInteraction = millis();
   nextBlink = millis() + random(2500, 6000);
   nextSay   = millis() + random(270000, 330000);   // ~1 random line / 5 min
@@ -196,13 +204,23 @@ void loop() {
   int bright = 200 - (int)(sleepy * 70);
   if (bright != curBrightness) { tft.setBrightness(bright); curBrightness = bright; }
 
-  // --- status bar: live clock + hacking/online indicator ---
+  // --- weather refresh (every 20 min); comment on a change ---
+  if (now >= nextWx) {
+    nextWx = now + 1200000UL;
+    if (weather::fetch()) {
+      weather::statusStr(wxStr, sizeof(wxStr));
+      lastClock[0] = '\0';                       // force status redraw
+      if (mood != STARTLED) scene::say(tft, weather::line(weather::cond));
+    }
+  }
+
+  // --- status bar: live clock + weather + hacking/online indicator ---
   char clk[6]; timesrc::clockStr(hour, clk);
   int hacking = inSession() ? 1 : 0;
   if (strcmp(clk, lastClock) != 0 || hacking != lastHacking) {
     strcpy(lastClock, clk);
     lastHacking = hacking;
-    scene::drawStatusBar(tft, clk, hacking);
+    scene::drawStatusBar(tft, clk, hacking, wxStr);
   }
 
   // --- laptop typing while hacking ---
@@ -265,7 +283,10 @@ void loop() {
     if (mood == HACKING) {
       scene::say(tft, hackLines[random(hackCount)]);
     } else if (mood == IDLE) {
-      if (random(3) == 0 && store::pokes > 0)
+      int pick = random(3);
+      if (pick == 0 && weather::valid && weather::line(weather::cond)[0])
+        scene::say(tft, weather::line(weather::cond));
+      else if (pick == 1 && store::pokes > 0)
         scene::say(tft, ("pokes: " + String(store::pokes)).c_str());
       else {
         scene::say(tft, idleLines[sayIdx]);
