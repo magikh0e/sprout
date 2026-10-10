@@ -57,6 +57,8 @@ Boot splash, and hacking mode mid Wi-Fi recon (`net:` SSIDs, `nmap -sV lan`).
 
 ## Configuration
 
+**Full reference: [docs/CONFIG.md](docs/CONFIG.md).** Quick version:
+
 Settings are layered — each source overrides the one before it:
 
 1. **Compiled defaults** — `src/config.h` (gitignored; copy from
