@@ -18,11 +18,42 @@
 #include "time_src.hpp"
 #include "store.hpp"
 #include "weather.hpp"
+#include "feeds.hpp"
+#include "monitor.hpp"
 
 #define TOUCH_TEST 0   // 1 = bare init + touch poll only (isolation); 0 = full app
 
 LGFX_Sprout tft;
 LGFX_Sprite creature(&tft);
+LGFX_Sprite ticker(&tft);
+
+// --- HN headline ticker (scrolls across y=TICKER_Y) ---
+constexpr int TICKER_Y = 128, TICKER_H = 20;
+String   tickerText;
+int      tickerX = 320, tickerW = 0;
+bool     tickerActive = false;
+int      hnIdx = -1;
+uint32_t tickerNext = 0, nextHN = 0, nextMon = 0;
+
+void setTicker(const String& headline) {
+  tickerText = "HN: " + headline + "   ";
+  ticker.setFont(&fonts::FreeMono9pt7b);
+  tickerW = ticker.textWidth(tickerText.c_str());
+  tickerX = 320;
+  tickerActive = true;
+}
+
+void stepTicker(uint32_t now) {
+  if (!tickerActive) return;
+  ticker.fillSprite(scene::BG);
+  ticker.setFont(&fonts::FreeMono9pt7b);
+  ticker.setTextColor(scene::STATUS, scene::BG);
+  ticker.setTextDatum(textdatum_t::top_left);
+  ticker.drawString(tickerText.c_str(), tickerX, 2);
+  ticker.pushSprite(0, TICKER_Y);
+  tickerX -= 2;
+  if (tickerX < -tickerW) { tickerActive = false; tickerNext = now + 2500; }
+}
 
 constexpr int PIN_RGB_R = 4;
 constexpr int PIN_RGB_G = 17;
@@ -153,6 +184,8 @@ void setup() {
   creature.setColorDepth(16);
   if (!creature.createSprite(scene::SPR_W, scene::SPR_H))
     Serial.println("[Sprout] sprite alloc failed");
+  ticker.setColorDepth(16);
+  ticker.createSprite(320, TICKER_H);
 
   timesrc::connectWifi();                    // uses settings ssid/pass
   settings::loadFromUrl(settings::configUrl);// optional remote override
@@ -161,7 +194,12 @@ void setup() {
     weather::statusStr(wxStr, sizeof(wxStr));
     scene::say(tft, weather::line(weather::cond));
   }
-  nextWx = millis() + 1200000UL;             // refresh every 20 min
+  feeds::fetchHN();                          // headlines for the ticker
+  monitor::enabled = settings::monitorHost.length() > 0;
+  if (monitor::enabled) { monitor::up = monitor::check(); monitor::known = true; }
+  nextWx  = millis() + 1200000UL;            // weather refresh 20 min
+  nextHN  = millis() + 1800000UL;            // headline refresh 30 min
+  nextMon = millis() + 60000UL;              // host check 60 s
   lastInteraction = millis();
   nextBlink = millis() + random(2500, 6000);
   nextSay   = millis() + random(270000, 330000);   // ~1 random line / 5 min
@@ -225,6 +263,31 @@ void loop() {
       lastClock[0] = '\0';                       // force status redraw
       if (mood != STARTLED) scene::say(tft, weather::line(weather::cond));
     }
+  }
+
+  // --- HN ticker: scroll current headline, cycle after a pause ---
+  if (now >= nextHN) { nextHN = now + 1800000UL; feeds::fetchHN(); }
+  if (feeds::count > 0 && !tickerActive && now >= tickerNext) {
+    hnIdx = (hnIdx + 1) % feeds::count;
+    setTicker(feeds::items[hnIdx]);
+  }
+  stepTicker(now);
+
+  // --- host monitor: react on up/down change ---
+  if (monitor::enabled && now >= nextMon) {
+    nextMon = now + 60000UL;
+    bool nowUp = monitor::check();
+    if (monitor::known && nowUp != monitor::up) {
+      if (!nowUp) {
+        scene::say(tft, settings::monitorHost.substring(0, 9) + " DOWN!");
+        mood = STARTLED; reactStart = now; reactDur = 1200;
+        rgbWrite(true, false, false); rgbRevertAt = now + 800; chirp(1500, 600);
+      } else {
+        scene::say(tft, settings::monitorHost.substring(0, 9) + " back up");
+        rgbWrite(false, true, false); rgbRevertAt = now + 400; chirp(1400, 2200);
+      }
+    }
+    monitor::up = nowUp; monitor::known = true;
   }
 
   // --- status bar: live clock + weather ---

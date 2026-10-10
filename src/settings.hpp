@@ -37,6 +37,9 @@ inline bool     hour24      = CLOCK_24H;      // true = 24h clock, false = 12h a
 inline uint32_t dayMs       = DEMO_DAY_MS;
 inline uint32_t hackAfterMs = 60000;
 inline String   configUrl   = CONFIG_URL;
+inline bool     hnEnabled   = HN_ENABLED;
+inline String   monitorHost = MONITOR_HOST;
+inline int      monitorPort = MONITOR_PORT;
 inline String   source      = "compiled";   // where config ended up coming from
 
 inline SPIClass sdSPI(VSPI);
@@ -68,6 +71,9 @@ inline void merge(JsonDocument& d, bool allowSecrets) {
   if (d.containsKey("day_ms"))       dayMs = d["day_ms"].as<uint32_t>();
   if (d.containsKey("hack_after_s")) hackAfterMs = (uint32_t)(d["hack_after_s"].as<float>() * 1000.0f);
   if (d.containsKey("config_url"))   configUrl = d["config_url"].as<String>();
+  if (d.containsKey("hn"))           hnEnabled = d["hn"].as<bool>();
+  if (d.containsKey("monitor_host")) monitorHost = d["monitor_host"].as<String>();
+  if (d.containsKey("monitor_port")) monitorPort = d["monitor_port"].as<int>();
 }
 
 // Read /sprout.json off an SD card if one is present. Fails quietly.

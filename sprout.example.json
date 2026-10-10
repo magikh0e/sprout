@@ -7,5 +7,8 @@
   "lon": "-157.8583",
   "demo": false,
   "hack_after_s": 60,
-  "config_url": ""
+  "config_url": "",
+  "hn": true,
+  "monitor_host": "",
+  "monitor_port": 443
 }

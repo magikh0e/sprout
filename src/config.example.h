@@ -23,6 +23,13 @@
 // Remote config fetched after Wi-Fi ("" to disable). Merged over compiled + SD.
 #define CONFIG_URL  ""
 
+// Hacker News headline ticker.
+#define HN_ENABLED   1
+
+// Host up/down monitor via TCP connect ("" to disable).
+#define MONITOR_HOST ""
+#define MONITOR_PORT 443
+
 // --- Demo day/night ---
 // 1 = fast simulated day (no Wi-Fi needed). 0 = real time via NTP.
 #define DEMO_DAYNIGHT 0
