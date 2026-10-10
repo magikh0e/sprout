@@ -59,7 +59,7 @@ inline void drawLog(LGFX_Sprout& t) {
     t.setTextColor(GREEN, BG);
     t.drawString("<sprout>", LOG_X, y);
     t.setTextColor(STATUS, BG);
-    t.drawString(logBuf[i].c_str(), LOG_X + 90, y);
+    t.drawString(logBuf[i].c_str(), LOG_X + 98, y);
   }
 }
 
@@ -70,7 +70,7 @@ inline void clearLog(LGFX_Sprout& t) {
 
 inline void say(LGFX_Sprout& t, const String& msg) {
   for (int i = 0; i < LOG_LINES - 1; i++) logBuf[i] = logBuf[i + 1];
-  logBuf[LOG_LINES - 1] = msg.length() > 17 ? msg.substring(0, 17) : msg;
+  logBuf[LOG_LINES - 1] = msg.length() > 18 ? msg.substring(0, 18) : msg;
   drawLog(t);
 }
 
