@@ -19,6 +19,9 @@
 #define WX_LAT      "21.3069"
 #define WX_LON      "-157.8583"
 
+// Remote config fetched after Wi-Fi ("" to disable). Merged over compiled + SD.
+#define CONFIG_URL  ""
+
 // --- Demo day/night ---
 // 1 = fast simulated day (no Wi-Fi needed). 0 = real time via NTP.
 #define DEMO_DAYNIGHT 0

@@ -32,17 +32,26 @@ inline String   lon         = WX_LON;
 inline bool     demo        = DEMO_DAYNIGHT;
 inline uint32_t dayMs       = DEMO_DAY_MS;
 inline uint32_t hackAfterMs = 60000;
-inline String   configUrl   = "";
+inline String   configUrl   = CONFIG_URL;
 inline String   source      = "compiled";   // where config ended up coming from
 
 inline SPIClass sdSPI(VSPI);
+
+// A coordinate must parse as a plain number — rejects anything that could
+// inject into the weather URL (lat/lon may come from untrusted SD/web config).
+inline bool validCoord(const String& s) {
+  if (s.isEmpty() || s.length() > 12) return false;
+  char* end = nullptr;
+  strtod(s.c_str(), &end);
+  return end && *end == '\0';
+}
 
 inline void merge(JsonDocument& d) {
   if (d.containsKey("wifi_ssid"))    ssid = d["wifi_ssid"].as<String>();
   if (d.containsKey("wifi_pass"))    pass = d["wifi_pass"].as<String>();
   if (d.containsKey("tz"))           tz   = d["tz"].as<String>();
-  if (d.containsKey("lat"))          lat  = d["lat"].as<String>();
-  if (d.containsKey("lon"))          lon  = d["lon"].as<String>();
+  if (d.containsKey("lat")) { String v = d["lat"].as<String>(); if (validCoord(v)) lat = v; }
+  if (d.containsKey("lon")) { String v = d["lon"].as<String>(); if (validCoord(v)) lon = v; }
   if (d.containsKey("demo"))         demo = d["demo"].as<bool>();
   if (d.containsKey("day_ms"))       dayMs = d["day_ms"].as<uint32_t>();
   if (d.containsKey("hack_after_s")) hackAfterMs = (uint32_t)(d["hack_after_s"].as<float>() * 1000.0f);
@@ -78,6 +87,7 @@ inline bool loadFromUrl(const String& url) {
     if (deserializeJson(doc, http.getString()) == DeserializationError::Ok) { merge(doc); ok = true; source = "url"; }
   }
   http.end();
+  Serial.printf("[cfg] remote %s: %s\n", ok ? "merged" : "skipped", url.c_str());
   return ok;
 }
 
